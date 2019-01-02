@@ -7,7 +7,6 @@ import java.lang.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
 import java.sql.*;
 import java.util.Vector;
 
@@ -16,30 +15,10 @@ public class MainWindow extends JFrame{
 	static Statement statement;
 	static ResultSet resultSet;
 	static ResultSetMetaData rsmd;
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/stuMM?characterEncoding=GBK";
-    static final String USER = "root";
-    static final String PASS = "199809";    
-    
-    //连接数据库
-	public Connection getConnection() {
-		try {
-			Class.forName(JDBC_DRIVER);
-			System.out.println("数据库驱动加载成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			connection = DriverManager.getConnection(DB_URL,USER,PASS);
-			System.out.println("数据库连接成功");
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		return connection;
-	}
-	
+
 	private DefaultTableModel getTableModel() {
-		connection = getConnection();
+		SQLconnection sqLconnection = new SQLconnection();
+		connection = sqLconnection.getConnection();
     	Vector tableHeader = new Vector();//表头
     	String head[] = {"学号","姓名","性别","年龄","生日","学院","专业","年级","班级","电话"};
     	Vector tabledata = new Vector();//表格
@@ -106,7 +85,14 @@ public class MainWindow extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				DetailWindow detailWindow = new DetailWindow();
+				int selectedrow = table.getSelectedRow();
+				if(selectedrow!=-1)
+				{
+					//System.out.println(selectedrow);
+					String selectedid = table.getValueAt(selectedrow, 0).toString();
+					//System.out.println(selectedid);
+					DetailWindow detailWindow = new DetailWindow(selectedid);
+				}
 			}
 		});
     	
