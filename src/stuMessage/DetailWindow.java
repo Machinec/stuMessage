@@ -1,13 +1,16 @@
 package stuMessage;
 
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class DetailWindow {
@@ -26,7 +29,9 @@ public class DetailWindow {
 	private JTextField tPhone;
 	
 	static Statement statement;
+	static Statement statement2;
 	static ResultSet resultSet;
+	static ResultSet resultSet2;
 	static ResultSetMetaData rsmd;
 	static Connection connection;
 
@@ -62,8 +67,17 @@ public class DetailWindow {
 		connection = sqLconnection.getConnection();
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("select * from student where ID="+selectedid);
-			resultSet.next();
+			statement2 = connection.createStatement();
+			resultSet = statement.executeQuery("select * from student where ID="+"'"+selectedid+"'");
+			resultSet2 = statement2.executeQuery("select * from image where ID="+"'"+selectedid+"'");
+			resultSet2.next();
+			if(!resultSet.next())
+			{
+				JOptionPane jOptionPane = new JOptionPane();
+				frame.dispose();
+				jOptionPane.showMessageDialog(null, "没有该学生信息", "查找错误", JOptionPane.PLAIN_MESSAGE);
+			}
+//			resultSet.next();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,8 +87,16 @@ public class DetailWindow {
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblPicture = new JLabel("picture");
-		lblPicture.setBounds(12, 12, 61, 15);
+		lblPicture.setBounds(12, 12, 104, 100);
 		frame.getContentPane().add(lblPicture);
+		try {
+            ImageIcon icon = new ImageIcon(resultSet2.getString(2));
+            icon.setImage(icon.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT));
+            lblPicture.setIcon(icon);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		
 		JLabel lid = new JLabel("学号");
 		lid.setBounds(207, 12, 61, 15);
